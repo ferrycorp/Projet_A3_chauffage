@@ -5,7 +5,7 @@ Avec
 P=Kp⋅e(t)
 I=𝐾𝑖⋅∑𝑒(𝑡)I=Ki⋅∑e(t)
 
-on peut utiliser la methode des trapèzes, on approxime l’aire sous la courbe par des trapèzes.
+on peut utiliser la methode des trapèzes pour l'intégralle, on approxime l’aire sous la courbe par des trapèzes.
 
 #include <stdio.h>
 #include <math.h>
@@ -27,6 +27,10 @@ double integrale_trapeze(double a, double b, int n) {
 
     return somme * dx;
 }
+
+on peut utiliser les différence fini pour la dériver.
+
+fx' = f(x + h) - f(x) / h
 
 D=Kd*(e(t)-e(t-1))/dt
 
