@@ -1,0 +1,23 @@
+PID = P+ I +D 
+Son but est de réduire l'erreur entre une valeur cible (la consigne) et la valeur mesurée (la sortie réelle).
+PID=Kp⋅e(t)+Ki⋅∫e(t)dt+Kd⋅dtde(t)
+Avec 
+P=Kp⋅e(t)
+I=𝐾𝑖⋅∑𝑒(𝑡)I=Ki⋅∑e(t)
+
+D=Kd*(e(t)-e(t-1))/dt
+
+ P : réagit à l'erreur actuelle. Plus l'erreur est grande, plus la correction est forte. 
+ I : accumule l'erreur passée. Corrige les erreurs persistantes (erreur statique). 
+D : anticipe l'erreur future en regardant sa vitesse de variation. Amortit les oscillations.
+Code c pour ouvrir un doc 
+FILE *fopen(const char *pathname, const char *mode);
+FILE *f_data = fopen("datatut", "r"); 
+FILE *f_consigne = fopen("consiguetat", "r");
+ if (f_data == NULL || f_consigne == NULL) {
+ perror("fopen");
+ exit(EXIT_FAILURE); }
+ while (fgets(ligne, sizeof(ligne), f_data) != NULL) { 
+printf("%s", ligne); }
+ fclose(f_data); 
+fclose(f_consigne);
