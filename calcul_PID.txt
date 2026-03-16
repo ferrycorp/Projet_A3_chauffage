@@ -5,6 +5,29 @@ Avec
 P=Kp⋅e(t)
 I=𝐾𝑖⋅∑𝑒(𝑡)I=Ki⋅∑e(t)
 
+on peut utiliser la methode des trapèzes, on approxime l’aire sous la courbe par des trapèzes.
+
+#include <stdio.h>
+#include <math.h>
+
+// Définir la fonction à intégrer ici
+double f(double x) {
+    return x*x; // exemple : f(x) = x^2
+}
+
+// Fonction qui calcule l'intégrale par la méthode du trapèze
+double integrale_trapeze(double a, double b, int n) {
+    double dx = (b - a) / n; // largeur des sous-intervalles
+    double somme = 0.5 * (f(a) + f(b)); // contribution des extrémités
+
+    for(int i = 1; i < n; i++) {
+        double x = a + i * dx;
+        somme += f(x);
+    }
+
+    return somme * dx;
+}
+
 D=Kd*(e(t)-e(t-1))/dt
 
  P : réagit à l'erreur actuelle. Plus l'erreur est grande, plus la correction est forte. 
