@@ -10,19 +10,19 @@ void visualisationT(temp_t myTemp)
     fclose(verrou);
 
     char temoin[10] = "false";
-    FILE* f = fopen("data.txt", "r");
-    if (f != NULL) {
-        fscanf(f, "%9s", temoin);
-        fclose(f);
+    FILE* fr = fopen("data.txt", "r");
+    if (fr != NULL) {
+        fscanf(fr, "%9s", temoin);
+        fclose(fr);
     }
 
-    FILE* f = fopen("data.txt", "w");
-    if (f != NULL) {
-        fprintf(f, "%s\n%.2f\n%.2f\n",
+    FILE* fw = fopen("data.txt", "w");
+    if (fw != NULL) {
+        fprintf(fw, "%s\n%.2f\n%.2f\n",
                 temoin,
                 myTemp.interieure,   // champ interieure en premier
                 myTemp.exterieure);
-        fclose(f);
+        fclose(fw);
     }
 
     remove(".verrouData");

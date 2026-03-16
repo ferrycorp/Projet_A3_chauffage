@@ -23,10 +23,9 @@
       }
 
       // Détermination du témoin selon la puissance
-      const char* etat = (puissance_f > 0.0f) ? "true" : "false";
+      const char* etat = (puissance_f != 0) ? "true" : "false";
 
       // Réécriture complète de data.txt
-      f = fopen("data.txt", "w");
       if (f != NULL) {
          fprintf(f, "%s\n%.2f\n%.2f\n", etat, tint, text);
          fclose(f);
