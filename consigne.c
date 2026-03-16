@@ -5,28 +5,27 @@
 #define VERROU   "verrouconsigne.txt"
 #define CONSIGNE "consigne.txt"
 
+float consigne(float thermostatPrec_f){
 
+    float thermostat_f = thermostatPrec_f;
 
-   float consigne(float thermostatPrec_f){
-      float thermostat_f=0;
+    FILE *Verrouconsigne = fopen(VERROU, "wx");
+    if(Verrouconsigne == NULL){
+        printf("Le fichier consigne est deja utilise\n");
+        return thermostatPrec_f;
+    }
+    fclose(Verrouconsigne);
 
-      FILE *Verrouconsigne = fopen(VERROU, "WX");
-      if(Verrouconsigne == NULL){
-         printf("Le fichier consigne est deja utiliser\n");
-      }close(Verrouconsigne);
+    FILE *f = fopen(CONSIGNE, "r");
+    if(f == NULL){
+        printf("Erreur ouverture fichier\n");
+    }
+    else{
+        fscanf(f, "%f", &thermostat_f);
+        fclose(f);
+    }
 
-      FILE *consigne = fopen(CONSIGNE, "r");
-      if(consigne == NULL){
-         printf("erreur ouverture fichier\n");
-      }close(consigne);
+    remove(VERROU);
 
-      if(consigne != NULL){
-         fscanf(consigne, "%f", &thermostat_f);
-      }
-
-      fclose(consigne);
-      remove(VERROU);
-     
-      return thermostat_f;
-   
-   }
+    return thermostat_f;
+}
