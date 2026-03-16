@@ -32,6 +32,8 @@ on peut utiliser les différence fini pour la dériver.
 
 fx' = f(x + h) - f(x) / h
 
+h = un petit pas
+
 D=Kd*(e(t)-e(t-1))/dt
 
  P : réagit à l'erreur actuelle. Plus l'erreur est grande, plus la correction est forte. 
