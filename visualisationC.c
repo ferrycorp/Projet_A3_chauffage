@@ -31,5 +31,5 @@
          fclose(f);
       }
 
-      remove(".verrouData");
+      remove("verrouData");
    }
