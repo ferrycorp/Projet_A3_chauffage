@@ -1,62 +1,69 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "regulation.h"
+#include "define.h"
+#include <stdio.h>
 
-static float regulationTOR(float tint, float csgn) {
-    if (tint < csgn) {
-        return 50.0f;
-    }
-    return 0.0f;
-}
+float I = 0.0; // Variable globale pour l'intégrale du PID
 
-static float regulationPID(float erreur, float erreurPrecedente, float* sommeIntegrale, int premiereIteration){
-    float P = 0.0f;
-    float I = 0.0f;
-    float D = 0.0f;
+float regulationTest(int regul, float consigne, float* tabT, int nT) 
+{
+    I = 0.0;
+    float cmd = 100.0;
+    
+    float KP = 1.1;
+    float KI = 0.2;
+    float KD = 0.15;
 
-    // Terme proportionnel : toujours calcule
-    P = KP * erreur;
-
-    if (!premiereIteration) {
-        // Terme integral : somme des erreurs precedentes
-        *sommeIntegrale += erreur;
-        I = KI * (*sommeIntegrale);
-
-        // Terme derive : variation de l'erreur entre deux iterations
-        D = KD * (erreur - erreurPrecedente);
-    }
-
-    float pid = P + I + D;
-
-    // Saturation entre 0 et 100%
-    if (pid < 0.0f) {
-        pid = 0.0f;
-    }
-    if (pid > 100.0f) {
-        pid = 100.0f;
-    }
-
-    return pid;
-}
-
-float regulationTest(int regul,float consigne,float* tabT, int nT){
-	float cmd = 100.0f;
-
-    float sommeIntegrale   = 0.0f;
-    float erreurPrecedente = 0.0f;
+    // Initialisation de la structure d'etat
+    prec_t etat;
+    etat.initFlag  = 0;    // 0 = premiere iteration pas encore faite
+    etat.erreur    = 0.0; // erreur precedente
 
     for (int i = 0; i < nT; i++) {
-        float erreur = consigne - tabT[i];
-        int premiereIteration = (i == 0);
 
+        // Calcul de l'erreur courante : consigne - mesure
+        float erreur = consigne - tabT[i];
+
+        // --- Tout ou Rien ---
         if (regul == 1) {
-            cmd = regulationTOR(tabT[i], consigne);
-        } else if (regul == 2) {
-            cmd = regulationPID(erreur, erreurPrecedente,&sommeIntegrale, premiereIteration);
+            if (tabT[i] < consigne) {
+                cmd = 50.0;
+            } else {
+                cmd = 0.0;
+            }
         }
 
-        erreurPrecedente = erreur;
+        // --- PID ---
+        else if (regul == 2) {
+
+            float P = KP * erreur;
+            float D = 0.0;
+
+            if (etat.initFlag == 0) {
+                // Premiere iteration : I et D ignores
+                cmd = P;
+                etat.initFlag = 1;
+
+            } else {
+                // Integrale
+                I += KI * ((etat.erreur + erreur)*10/2);
+
+                //if(I > 100.0) I -= KI * (etat.erreur + erreur)*10/2; // Anti-windup
+                //if(I <= 0.0)   I -= KI * ((etat.erreur + erreur)*10/2);   // Anti-windup
+
+                // Derivee
+                D = KD * (erreur - etat.erreur)/10;
+
+                cmd = P + I + D;
+
+                // Saturation entre 0 et 100%
+                if (cmd > 100.0f) cmd = 100.0f;
+                if (cmd < 0.0f)   cmd = 0.0f;
+            }
+
+            // On sauvegarde l'erreur courante comme precedente
+            etat.erreur = erreur;
+        }
     }
 
-	return cmd;
+    return cmd;
 }
