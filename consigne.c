@@ -2,26 +2,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define VERROU   "verrouconsigne.txt"
+#define VERROU   ".verrouConsigne"
 #define CONSIGNE "consigne.txt"
 
-float consigne(float thermostatPrec_f){
+float consigne(float csgn){
 
-    float thermostat_f = thermostatPrec_f;
+    float thermostat_f = csgn;
 
-    FILE *Verrouconsigne = fopen(VERROU, "wx");
-    if(Verrouconsigne == NULL){
-        printf("Le fichier consigne est deja utilise\n");
-        return thermostatPrec_f;
+    FILE *verrou = fopen(VERROU, "wx");
+    if(verrou == NULL){
+        return csgn;
     }
-    fclose(Verrouconsigne);
+    fclose(verrou);
 
     FILE *f = fopen(CONSIGNE, "r");
-    if(f == NULL){
-        printf("Erreur ouverture fichier\n");
-    }
-    else{
-        fscanf(f, "%f", &thermostat_f);
+    if(f != NULL){
+        if(fscanf(f, "%f", &thermostat_f) != 1){
+            thermostat_f = csgn;
+        }
         fclose(f);
     }
 
