@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include "define.h"
 #include "visualisationT.h"
 #include "visualisationC.h"
