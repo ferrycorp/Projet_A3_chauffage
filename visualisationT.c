@@ -2,28 +2,30 @@
 
 void visualisationT(temp_t myTemp)
 {
-    FILE* verrou = fopen("verrou_data.txt", "wx");
+    FILE* verrou = fopen(".verrouData", "wx");
     if (verrou == NULL) {
         // Le fichier existe déjà, attendre qu'il soit libéré
         return;
     }
     fclose(verrou);
 
-    char temoin[10] = "false";
-    FILE* fr = fopen("data.txt", "r");
-    if (fr != NULL) {
-        fscanf(fr, "%9s", temoin);
-        fclose(fr);
+    char etat[5] = "false";
+    float tint = 0.0f, text = 0.0f;
+
+    FILE* f = fopen("data.txt", "r");
+    if (f != NULL) {
+        fscanf(f, "%9s", etat);
+        fclose(f);
     }
 
-    FILE* fw = fopen("data.txt", "w");
-    if (fw != NULL) {
-        fprintf(fw, "%s\n%.2f\n%.2f\n",
-                temoin,
-                myTemp.interieure,   // champ interieure en premier
+    f = fopen("data.txt", "w");
+    if (f != NULL) {
+        fprintf(f, "%s\n%.2f\n%.2f\n",
+                etat,
+                myTemp.interieure,
                 myTemp.exterieure);
-        fclose(fw);
+        fclose(f);
     }
 
-    remove("verrouData");
+    remove(".verrouData");
 }
