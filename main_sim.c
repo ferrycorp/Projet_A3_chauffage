@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 #include "define.h"
 #include "visualisationT.h"
 #include "visualisationC.h"
@@ -23,18 +24,18 @@ int main() {
         puissance_f = regulationTest(2, consigne_f, tabT, i);
 
         visualisationC(puissance_f);
+        // commande(puissance_f); // À ajouter pour le mode USB
 
         tempSimulee = simCalc(puissance_f, simParam);
         tabT[i] = tempSimulee.interieure;
         visualisationT(tempSimulee);
 
         i++;
-        //sleep(40); // Optionnel : pour cadencer à 40ms
+        sleep(1);
     }
 
     puissance_f = 0.0f;
     visualisationC(puissance_f);
-    // commande(puissance_f);
     printf("Arret du systeme (Consigne a 5 degres ou fin de simulation).\n");
 
     simDestruct(simParam);

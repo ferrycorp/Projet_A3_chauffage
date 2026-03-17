@@ -2,46 +2,61 @@
 #include <stdlib.h>
 #include "regulation.h"
 
-static float somme_erreurs = 0.0f;
-static float erreur_precedente = 0.0f;
+static float regulationTOR(float tint, float csgn) {
+    if (tint < csgn) {
+        return 50.0f;
+    }
+    return 0.0f;
+}
 
-/* ========================= */
-/* 2.3.2 REGULATEUR PID      */
-/* ========================= */
+static float regulationPID(float erreur, float erreurPrecedente, float* sommeIntegrale, int premiereIteration){
+    float P = 0.0f;
+    float I = 0.0f;
+    float D = 0.0f;
 
+    // Terme proportionnel : toujours calcule
+    P = KP * erreur;
 
-float regulationTest(int regul, float consigne, float* tabT, int nT){
-    float cmd = 0.0f;
-    float sommeIntegrale = 0.0f;
-    float erreurPrecedente = 0.0f;
+    if (!premiereIteration) {
+        // Terme integral : somme des erreurs precedentes
+        *sommeIntegrale += erreur;
+        I = KI * (*sommeIntegrale);
 
-     for (int i = 0; i < nT; i++) {
-        float erreur = consigne - tabT[i];
-
-        if (regul == 1) { // Mode TOUT OU RIEN (Source [1])
-            if (tabT[i] < consigne) cmd = 50.0f;
-            else cmd = 0.0f;
-        } 
-        else if (regul == 2) { // Mode PID (Source [1])
-            float P = KP * erreur;
-            sommeIntegrale+=(erreur+erreurPrecedente)/2.0f; // On accumule l'historique
-            
-            if (i == 0) {
-                cmd = P; // Uniquement P à la 1ère itération (Source [1])
-            } else {
-                 // Méthode des trapèzes
-                float I = KI * sommeIntegrale;
-                float D = KD * (erreur - erreurPrecedente);
-                cmd = P + I + D;
-            }
-
-            // Saturation entre 0 et 100 (Source [3, 4])
-            if (cmd < 0.0f) cmd = 0.0f;
-            else if (cmd > 100.0f) cmd = 100.0f;
-        }
-        
-        erreurPrecedente = erreur; // Mise à jour de l'erreur pour la dérivée
+        // Terme derive : variation de l'erreur entre deux iterations
+        D = KD * (erreur - erreurPrecedente);
     }
 
-    return cmd; // Retourne la dernière commande calculée [1]
+    float pid = P + I + D;
+
+    // Saturation entre 0 et 100%
+    if (pid < 0.0f) {
+        pid = 0.0f;
+    }
+    if (pid > 100.0f) {
+        pid = 100.0f;
+    }
+
+    return pid;
+}
+
+float regulationTest(int regul,float consigne,float* tabT, int nT){
+	float cmd = 100.0f;
+
+    float sommeIntegrale   = 0.0f;
+    float erreurPrecedente = 0.0f;
+
+    for (int i = 0; i < nT; i++) {
+        float erreur = consigne - tabT[i];
+        int premiereIteration = (i == 0);
+
+        if (regul == 1) {
+            cmd = regulationTOR(tabT[i], consigne);
+        } else if (regul == 2) {
+            cmd = regulationPID(erreur, erreurPrecedente,&sommeIntegrale, premiereIteration);
+        }
+
+        erreurPrecedente = erreur;
+    }
+
+	return cmd;
 }
