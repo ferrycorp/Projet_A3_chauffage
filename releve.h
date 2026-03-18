@@ -3,6 +3,6 @@
 
 #include "define.h"
 
-temp_t releve();
+temp_t relever(FT_HANDLE ftHandle);
 
 #endif

@@ -3,14 +3,16 @@
 #include <string.h>
 #include "ftd2xx.h"
 #include "define.h"
+#include "commande.h"
+#include "releve.h"
 
 #define BAUD_RATE 115200
 
 
-int main(void) {
+int main() {
     
     FT_HANDLE ftHandle;
-FT_STATUS ftStatus;
+    FT_STATUS ftStatus;
 
 
     // 1. Lister les périphériques disponibles
@@ -68,9 +70,18 @@ FT_Close(ftHandle);
         return EXIT_FAILURE;
     }
 
-    FT_Close(ftHandle);
-    printf("Connexion fermée\n");
+    //envoyer_commande(ftHandle, 75.0f);
+// -> PUIS = (75 * 127) / 100 = 95  -> octet : 0x5F
 
+    // Puissance à 100%
+    envoyer_commande(ftHandle, 30.0f);
+    // -> PUIS = 127                     -> octet : 0x7F
+
+    // Puissance à 0%
+    //envoyer_commande(ftHandle, 0.0f);
+    sleep(1);
+    relever(ftHandle);
+    
     return EXIT_SUCCESS;
 
 

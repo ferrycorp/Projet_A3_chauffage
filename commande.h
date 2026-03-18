@@ -1,8 +1,4 @@
-#ifndef COMMANDE_H
-#define COMMANDE_H
 
-#include "define.h"
+#include "ftd2xx.h"
 
-void commande(float puissance);
-
-#endif
+void envoyer_commande(FT_HANDLE ftHandle, float puissance);
