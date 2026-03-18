@@ -9,32 +9,33 @@
 #include "consigne.h"
 
 int main() {
-    temp_t tempSimulee = {10.0f, 10.0f};
+    temp_t tempSimulee = {10.0, 10.0};
     struct simParam_s* simParam = simConstruct(tempSimulee);
-    float tabT[1000];
-    float consigne_f = 12.0f;
-    float puissance_f = 0.0f;
+    float tabT[10000];
+    float consigne_f = 12.0;
+    float puissance_f = 0.0;
     int i = 0;
+    remove(".verrouData");
+    remove("verrouConsigne");
 
     // Utilisation d'une boucle while pour gérer l'arrêt à 5°C
-    while (consigne_f > 5.0f && i < 1000) {
+    while (i < 10000) {
         
         consigne_f = consigne(consigne_f); 
 
         puissance_f = regulationTest(2, consigne_f, tabT, i);
 
         visualisationC(puissance_f);
-        // commande(puissance_f); // À ajouter pour le mode USB
 
         tempSimulee = simCalc(puissance_f, simParam);
         tabT[i] = tempSimulee.interieure;
         visualisationT(tempSimulee);
 
         i++;
-        sleep(1);
+        usleep(150000);
     }
 
-    puissance_f = 0.0f;
+    puissance_f = 0.0;
     visualisationC(puissance_f);
     printf("Arret du systeme (Consigne a 5 degres ou fin de simulation).\n");
 

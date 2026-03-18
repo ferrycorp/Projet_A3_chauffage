@@ -9,9 +9,9 @@ float regulationTest(int regul, float consigne, float* tabT, int nT)
     I = 0.0;
     float cmd = 100.0;
     
-    float KP = 1.1;
-    float KI = 0.2;
-    float KD = 0.15;
+    float KP = 2.0;
+    float KI = 0.1;
+    float KD = 0.05;
 
     // Initialisation de la structure d'etat
     prec_t etat;
@@ -47,17 +47,17 @@ float regulationTest(int regul, float consigne, float* tabT, int nT)
                 // Integrale
                 I += KI * ((etat.erreur + erreur)*10/2);
 
-                //if(I > 100.0) I -= KI * (etat.erreur + erreur)*10/2; // Anti-windup
-                //if(I <= 0.0)   I -= KI * ((etat.erreur + erreur)*10/2);   // Anti-windup
+                if(I > 100.0) I -= KI * (etat.erreur + erreur)*10/2; // Anti-windup
+                if(I <= 0.0)   I -= KI * ((etat.erreur + erreur)*10/2);   // Anti-windup
 
                 // Derivee
                 D = KD * (erreur - etat.erreur)/10;
 
                 cmd = P + I + D;
 
-                // Saturation entre 0 et 100%
-                if (cmd > 100.0f) cmd = 100.0f;
-                if (cmd < 0.0f)   cmd = 0.0f;
+                if (cmd > 100.0) cmd = 100.0;
+                if (cmd < 0.0)   cmd = 0.1;
+
             }
 
             // On sauvegarde l'erreur courante comme precedente
