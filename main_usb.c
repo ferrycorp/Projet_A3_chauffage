@@ -5,6 +5,11 @@
 #include "define.h"
 #include "commande.h"
 #include "releve.h"
+#include "visualisationT.h"
+#include "visualisationC.h"
+#include "regulation.h"
+#include "simulateur.h"
+#include "consigne.h"
 
 #define BAUD_RATE 115200
 
@@ -14,8 +19,6 @@ int main() {
     FT_HANDLE ftHandle;
     FT_STATUS ftStatus;
 
-
-    // 1. Lister les périphériques disponibles
     ftStatus = FT_Open(0, &ftHandle);
 
 
@@ -80,7 +83,28 @@ FT_Close(ftHandle);
     // Puissance à 0%
     //envoyer_commande(ftHandle, 0.0f);
     sleep(1);
-    relever(ftHandle);
+    temp_t tempSimulee = {10.0, 10.0};
+    float tabT[10000];
+    float consigne_f = 12.0;
+    float puissance_f = 0.0;
+    int i = 0;
+    remove(".verrouData");
+    remove("verrouConsigne");
+    while (i < 10000) {
+        
+        consigne_f = consigne(consigne_f); 
+
+        puissance_f = regulationTest(2, consigne_f, tabT, i);
+
+        visualisationC(puissance_f);
+
+        tempSimulee = relever(ftHandle);
+        tabT[i] = tempSimulee.interieure;
+        visualisationT(tempSimulee);
+
+        i++;
+        usleep(150000);
+    }
     
     return EXIT_SUCCESS;
 

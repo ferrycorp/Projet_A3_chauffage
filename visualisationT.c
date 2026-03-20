@@ -10,7 +10,6 @@ void visualisationT(temp_t myTemp)
     fclose(verrou);
 
     char etat[5] = "false";
-    float tint = 0.0f, text = 0.0f;
 
     FILE* f = fopen("data.txt", "r");
     if (f != NULL) {
