@@ -2,6 +2,8 @@
 #include "define.h"
 #include <stdio.h>
 
+#define DT 100
+
 float I = 0.0; // Variable globale pour l'intégrale du PID
 
 float regulationTest(int regul, float consigne, float* tabT, int nT) 
@@ -45,13 +47,13 @@ float regulationTest(int regul, float consigne, float* tabT, int nT)
 
             } else {
                 // Integrale
-                I += KI * ((etat.erreur + erreur)*10/2);
+                I += KI * ((etat.erreur + erreur)*DT/2);
 
-                if(I > 100.0) I -= KI * (etat.erreur + erreur)*10/2; // Anti-windup
-                if(I <= 0.0)   I -= KI * ((etat.erreur + erreur)*10/2);   // Anti-windup
+                if(I > 100.0) I -= KI * (etat.erreur + erreur)*DT/2; // Anti-windup
+                if(I <= 0.0)   I -= KI * ((etat.erreur + erreur)*DT/2);   // Anti-windup
 
                 // Derivee
-                D = KD * (erreur - etat.erreur)/10;
+                D = KD * (erreur - etat.erreur)/DT;
 
                 cmd = P + I + D;
 
