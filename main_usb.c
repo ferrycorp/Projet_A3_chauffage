@@ -77,34 +77,46 @@ FT_Close(ftHandle);
 // -> PUIS = (75 * 127) / 100 = 95  -> octet : 0x5F
 
     // Puissance à 100%
-    envoyer_commande(ftHandle, 30.0f);
+    
     // -> PUIS = 127                     -> octet : 0x7F
 
     // Puissance à 0%
     //envoyer_commande(ftHandle, 0.0f);
-    sleep(1);
+    
     temp_t tempSimulee = {10.0, 10.0};
     float tabT[10000];
     float consigne_f = 12.0;
     float puissance_f = 0.0;
     int i = 0;
-    remove(".verrouData");
-    remove("verrouConsigne");
+    //remove(".verrouData");
+    //remove("verrouConsigne");
+    envoyer_commande(ftHandle, 50.0f);
+        sleep(1);
     while (i < 10000) {
         
         consigne_f = consigne(consigne_f); 
-
-        puissance_f = regulationTest(2, consigne_f, tabT, i);
+        
+        tempSimulee = relever(ftHandle);
+        
+        tabT[i] = tempSimulee.interieure;
+        
+        
+    puissance_f = regulationTest(2, consigne_f, tabT, i);
 
         visualisationC(puissance_f);
 
-        tempSimulee = relever(ftHandle);
-        tabT[i] = tempSimulee.interieure;
+        
         visualisationT(tempSimulee);
+        printf("Consigne: %.2f | Temp: %.2f | Cmd: %.2f%%\n",
+           consigne_f,
+           tempSimulee.interieure,
+           puissance_f);
 
         i++;
         usleep(150000);
     }
+    envoyer_commande(ftHandle, 0.0f);
+    FT_Close(ftHandle);
     
     return EXIT_SUCCESS;
 
