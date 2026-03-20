@@ -2,7 +2,7 @@
 #include "define.h"
 #include <stdio.h>
 
-#define DT 100
+#define DT 10
 
 float I = 0.0; // Variable globale pour l'intégrale du PID
 
@@ -11,7 +11,7 @@ float regulationTest(int regul, float consigne, float* tabT, int nT)
     I = 0.0;
     float cmd = 100.0;
     
-    float KP = 2.0;
+    float KP = 5.0;
     float KI = 0.1;
     float KD = 0.05;
 
